@@ -1,2 +1,2 @@
 install Python from og website - https://www.python.org/downloads/
-pip install python-telegram-bot psutil pyautogui keyboard
+pip install python-telegram-bot psutil pyautogui keyboard pyinstaller
