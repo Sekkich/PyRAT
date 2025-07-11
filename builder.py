@@ -12,7 +12,7 @@ class ModifierApp:
         # Поле для имени переменной с значением по умолчанию
         tk.Label(root, text="Variable Name:").grid(row=0, column=0, padx=5, pady=5, sticky="e")
         self.var_name_entry = tk.Entry(root, width=30)
-        self.var_name_entry.insert(0, "BOT_TOKEN")  # Значение по умолчанию
+        self.var_name_entry.insert(0, "_W2Z8T3K9V5P1_TOKEN")  # Значение по умолчанию
         self.var_name_entry.grid(row=0, column=1, padx=5, pady=5)
 
         # Поле для значения переменной с значением по умолчанию

